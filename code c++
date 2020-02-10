@@ -1,0 +1,83 @@
+#include<stdio.h>
+#include<string.h>
+#include<vector>
+
+using namespace std;
+
+int val;
+vector<int> vVal;
+
+struct moi{
+	int index;
+	int val = -1;
+}mo[100000][1000];
+
+int getBalance(int curr,int total,int manyCoin,int diff,vector<int> vCoin,int val,int index){
+	int diffNow = total-(2*curr);
+
+	if(mo[curr][val].index == index && mo[curr][val].val != -1){
+		return mo[curr][val].val;
+	}
+	
+	if(manyCoin == 1) return vCoin[0];
+	
+	if(diffNow < 0) diffNow *= -1;
+	
+	if(diffNow == 0) return 0;
+
+	if(diffNow > diff && diff != -1) return diff; 
+	
+	int res = 100000;
+	
+	for(int i=0;i<manyCoin ;i++){
+		if(vCoin[i] != -1){
+			
+			int val = vCoin[i];
+			
+			vCoin[i] = -1;
+			
+			int temp = getBalance(curr+val,total,manyCoin,diffNow,vCoin,val,index);
+			
+			if(res > temp){
+				res = temp;
+			}
+			mo[curr][val].val = res;
+			mo[curr][val].index = index;
+
+			if(res == 0){
+				return 0;
+			}
+		}
+	}
+	
+	return res;
+}
+
+int main(){
+	
+	int coin;
+	int input;
+	
+	scanf("%d",&input);
+	
+	int idx = 0;
+	
+	while(input--){
+		
+		vVal.clear();
+		int total = 0;
+		scanf("%d",&coin);
+	
+		for(int i=0;i<coin;i++){
+			scanf("%d",&val);
+			total += val;
+			vVal.push_back(val);
+		}
+	
+		printf("%d\n",getBalance(0,total,coin,-1,vVal,0,idx));
+		
+		idx++;
+	}
+	
+	return 0;
+}
